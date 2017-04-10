@@ -8,3 +8,4 @@ all flags from the environment, optionally with a prefix. All env var names
 will be derived from the fully namespaced flag name.
 
 After parsing, the values are towed outside the environment.
+hello
