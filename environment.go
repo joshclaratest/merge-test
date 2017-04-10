@@ -2,6 +2,7 @@ package twentythousandtonnesofcrudeoil
 
 import (
 	"os"
+	"reflect"
 	"strings"
 
 	"github.com/jessevdk/go-flags"
@@ -15,11 +16,20 @@ func installEnv(parser *flags.Parser, prefix string) {
 	eachOption(parser.Command, func(opt *flags.Option) {
 		if len(opt.EnvDefaultKey) == 0 {
 			opt.EnvDefaultKey = prefix + flagEnvName(opt.LongNameWithNamespace())
+
+			kind := reflect.TypeOf(opt.Value()).Kind()
+			if kind == reflect.Map || kind == reflect.Slice {
+				opt.EnvDefaultDelim = ","
+			}
 		}
 	})
 
 	parser.CommandHandler = func(command flags.Commander, args []string) error {
 		clearEnv(parser, prefix)
+
+		if command == nil {
+			return nil
+		}
 
 		return command.Execute(args)
 	}
